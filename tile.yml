@@ -1,0 +1,73 @@
+---
+# This is the name Opsman gives the tile and is what will show up with an 'om staged-products' output.
+name: security-software-installation
+
+metadata_version: 2.0
+
+# Note: The image you use must be a 128x128 pixel PNG file.
+icon_file: resources/cf-tile-image.png
+
+# This is what appears on the tile in Opsman.
+label: 'Security Software Installation'
+
+description: Install necessary agents for compliance
+rank: 1
+service_broker: false # Default value
+
+# We'll hook into the 'pre-start-script' job in the 'os-conf' release.
+packages:
+- name: os-conf
+  version: 21.0.0
+  type: bosh-release
+  path: resources/os-conf-release-21.0.0.tgz
+
+# NOTE: You must have at least one 'form', else Ops Manager will stacktrace with 
+# no helpful errors when you upload the tile. See below for a no-op form, if needed.
+forms:
+- name: security_software_installation
+  label: Security Software Installation Script
+  description: Security Software Installation
+  markdown: |
+    NOTE: The first line must be '#!/bin/bash'.
+  properties:
+  - name: security_software_install_script
+    type: text
+    label: Shell script to run on each Bosh-managed VM
+
+# Uncomment this block if you need a no-op form to placate Ops Manager.
+#- name: empty_properties
+#  label: No Configurable Options
+#  description: This tile does not support configurations at this time.
+
+# We define our addons in the runtime configs section.
+runtime_configs:
+  - name: agent-installation
+    runtime_config:
+      releases:
+
+      # Inside the 'os-conf' release referenced in the 'packages' section above.
+      - name: os-conf
+        version: 21.0.0
+
+      # List of addons. For now, only one.
+      addons:
+      - name: install-security-agents
+
+        # Include this addon when using the following stemcells.
+        include:
+          stemcell:
+            - os: ubuntu-trusty
+            - os: ubuntu-xenial
+
+        # The jobs to be run (i.e. our install commands)
+        jobs:
+
+        # This name is important. The 'os-conf' release contains a job by this name.
+        - name: pre-start-script
+          release: os-conf
+
+          # The job supports a property called 'script'. It will execute the contents
+          # of this property. 
+          # We will use the values from the 'security_software_install_script' form above.
+          properties:
+            script: (( .properties.security_software_install_script.value ))
