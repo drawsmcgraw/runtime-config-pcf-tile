@@ -17,9 +17,9 @@ service_broker: false # Default value
 # We'll hook into the 'pre-start-script' job in the 'os-conf' release.
 packages:
 - name: os-conf
-  version: 21.0.0
+  version: 22.1.3
   type: bosh-release
-  path: resources/os-conf-release-21.0.0.tgz
+  path: resources/os-conf-22.1.3.tgz
 
 # NOTE: You must have at least one 'form', else Ops Manager will stacktrace with 
 # no helpful errors when you upload the tile. See below for a no-op form, if needed.
@@ -47,7 +47,7 @@ runtime_configs:
 
       # Inside the 'os-conf' release referenced in the 'packages' section above.
       - name: os-conf
-        version: 21.0.0
+        version: 22.1.3
 
       # List of addons. For now, only one.
       addons:
@@ -63,7 +63,7 @@ runtime_configs:
         jobs:
 
         # This name is important. The 'os-conf' release contains a job by this name.
-        - name: pre-start-script
+        - name: post-deploy-script
           release: os-conf
 
           # The job supports a property called 'script'. It will execute the contents
