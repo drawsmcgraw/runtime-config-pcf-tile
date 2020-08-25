@@ -1,7 +1,12 @@
 # Example PCF Tile
 The purpose of this repo is to show how to buld a tile to perform pre-install actions on all Bosh-managed VMs in PCF. For example, the installation of security agents. 
 
+![image](images/ste-tile-image.png)
+
 This tile provides a hook for you to write simple Bash lines to perform said installation. This hook takes the form of a text box in Ops Manager that you can paste Bash code into, thus simplifying the user experience and making updates possible without the need to rebuild the tile.
+
+
+![image](images/ste-tile-config.png)
 
 For simplicity, we're including the `os_conf` Bosh release and adding our task to the `pre-start-script` job. There are many ways to achieve our objective, this repo only shows one of those ways.
 
